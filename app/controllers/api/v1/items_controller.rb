@@ -5,7 +5,7 @@ class Api::V1::ItemsController < ApplicationController
   # GET /api/v1/items
   # GET /api/v1/items.json
   def index
-    @items = Item.all
+    @items = Item.where(:bucketlist_id => params[:bucketlist_id])
 
     render json: @items
   end
@@ -20,9 +20,9 @@ class Api::V1::ItemsController < ApplicationController
   # POST /api/v1/items.json
   def create
     @item = Item.new(item_params)
-
+    @item.bucketlist_id = item_params[:bucketlist_id]
     if @item.save
-      render json: @item, status: :created, location: api_v1_item_path(@item)
+      render json: @item, status: :created
     else
       render json: @item.errors, status: :unprocessable_entity
     end
@@ -34,7 +34,7 @@ class Api::V1::ItemsController < ApplicationController
     @item = Item.find(params[:id])
 
     if @item.update(item_params)
-      head :no_content
+      render json: { message: "updated successfully", item: @item }
     else
       render json: @item.errors, status: :unprocessable_entity
     end

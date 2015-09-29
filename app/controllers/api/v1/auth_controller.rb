@@ -1,5 +1,5 @@
 class Api::V1::AuthController < ApplicationController
-  before_action :authenticate, only: [:login]
+  before_action :authenticate, only: [:logout]
   def login
     user = User.find_by(email: params[:email].downcase)
     if user && user.authenticate(params[:password])
