@@ -11,7 +11,6 @@ class User < ActiveRecord::Base
 
   has_many :bucketlists
 
-  private
   def generate_auth_token
     begin
       self.token = SecureRandom.hex
