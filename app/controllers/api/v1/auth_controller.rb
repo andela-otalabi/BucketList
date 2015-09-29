@@ -10,6 +10,15 @@ class Api::V1::AuthController < ApplicationController
   end
 
   def logout
-
+    authorization = request.env["HTTP_AUTHORIZATION"]
+    authorization["Token token="]=""
+    authorization
+    user = User.find_by(token: authorization)
+    user.generate_auth_token
+    if user.save
+      render json: "You have logged out successfully"
+    else
+      render json: { errors: "Error logging out"}
+    end
   end
 end
