@@ -1,15 +1,13 @@
 class Api::V1::BucketlistsController < ApplicationController
   before_action :set_bucketlist, only: [:show, :update, :destroy]
-  before_action :authenticate, only: [:create, :show, :update, :destroy]
-  before_action :get_user, only: [:show, :update, :destroy]
-
+  before_action :find_user
   def index
     @bucketlists = Bucketlist.all
     render json: @bucketlists, each_serializer: AllbucketlistsSerializer
   end
 
   def show
-    if @user == find_user.id
+    if @user
       render json: @bucketlist
     else
       render json: { message: 'you are not authorized to view this page' }
@@ -17,18 +15,20 @@ class Api::V1::BucketlistsController < ApplicationController
   end
 
   def create
-    @bucketlist = Bucketlist.new(bucketlist_params)
-    @bucketlist.user_id = find_user.id
+    if @user
+      @bucketlist = Bucketlist.new(bucketlist_params)
+      @bucketlist.user_id = @user.id
 
-    if @bucketlist.save
-      render json: @bucketlist, status: :created, location: api_v1_bucketlist_path(@bucketlist)
-    else
-      render json: @bucketlist.errors, status: :unprocessable_entity
+      if @bucketlist.save
+        render json: @bucketlist, status: :created, location: api_v1_bucketlist_path(@bucketlist)
+      else
+        render json: @bucketlist.errors, status: :unprocessable_entity
+      end
     end
   end
 
   def update
-    if @user == find_user.id
+    if @user
       @bucketlist = Bucketlist.find(params[:id])
 
       if @bucketlist.update(bucketlist_params)
@@ -42,7 +42,7 @@ class Api::V1::BucketlistsController < ApplicationController
   end
   
   def destroy
-    if @user == find_user.id
+    if @user
       @bucketlist.destroy
       render json: { message: "bucketlist deleted" }
     else
@@ -51,9 +51,6 @@ class Api::V1::BucketlistsController < ApplicationController
   end
 
   private
-    def get_user
-      @user = @bucketlist.user_id if @bucketlist
-    end
 
     def set_bucketlist
       @bucketlist = Bucketlist.find_by(id: params[:id])
