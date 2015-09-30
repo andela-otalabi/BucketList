@@ -17,6 +17,13 @@ class ApplicationController < ActionController::API
     render json: {message: "pls login to access page"}
   end
 
+  def find_user
+    authorization = request.env["HTTP_AUTHORIZATION"]
+    authorization["Token token="]=""
+    authorization
+    @user = User.find_by(token: authorization)
+  end
+
   def add_allow_credentials_headers
     response.headers['Access-Control-Allow-Origin'] = request.headers['Origin'] || '*'
     response.headers['Access-Control-Allow-Credentials'] = 'true'

@@ -12,7 +12,9 @@ class Api::V1::BucketlistsController < ApplicationController
   end
 
   def create
+    @user = find_user
     @bucketlist = Bucketlist.new(bucketlist_params)
+    @bucketlist.user_id = @user
 
     if @bucketlist.save
       render json: @bucketlist, status: :created, location: api_v1_bucketlist_path(@bucketlist)
