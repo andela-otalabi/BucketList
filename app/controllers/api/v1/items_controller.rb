@@ -1,7 +1,7 @@
 class Api::V1::ItemsController < ApplicationController
   # before_action :set_item, only: [:show, :update, :destroy]
   before_action :authenticate, only: [:create, :show, :update, :destroy]
-  before_action :get_user, only: [:show, :update, :destroy]
+  # before_action :get_user, only: [:show, :update, :destroy]
 
   def index
     @items = Item.where(:bucketlist_id => params[:bucketlist_id])
@@ -9,7 +9,6 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def show
-    @item = Item.find_by(id: params[:id])
     if false
       if @user == find_user.id
         render json: @item
