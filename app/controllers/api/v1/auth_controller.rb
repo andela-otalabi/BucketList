@@ -1,5 +1,6 @@
 class Api::V1::AuthController < ApplicationController
-  before_action :authenticate, only: [:logout]
+  before_action :find_user, only: [:logout]
+
   def login
     user = User.find_by(email: params[:email].downcase)
     if user && user.authenticate(params[:password])
@@ -12,13 +13,14 @@ class Api::V1::AuthController < ApplicationController
   end
 
   def logout
-    user = find_user
-    user.generate_auth_token
-    user.logged_in = false
-    if user.save
-      render json: "You have logged out successfully"
-    else
-      render json: { errors: "Error logging out"}
+    if @user
+      @user.generate_auth_token
+      @user.logged_in = false
+      if @user.save
+        render json: "You have logged out successfully"
+      else
+        render json: { errors: "Error logging out"}
+      end
     end
   end
 end
