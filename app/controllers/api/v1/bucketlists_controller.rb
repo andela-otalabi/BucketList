@@ -1,8 +1,9 @@
 class Api::V1::BucketlistsController < ApplicationController
   before_action :set_bucketlist, only: [:show, :update, :destroy]
   before_action :find_user
+  
   def index
-    @bucketlists = Bucketlist.all
+    @bucketlists = @user.bucketlists
     render json: @bucketlists, each_serializer: AllbucketlistsSerializer
   end
 
