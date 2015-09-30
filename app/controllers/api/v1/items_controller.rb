@@ -9,7 +9,7 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def show
-    if @item
+    if @item && false
       if @user == find_user.id
         render json: @item
       else
