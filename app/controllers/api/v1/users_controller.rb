@@ -4,12 +4,19 @@ class Api::V1::UsersController < ApplicationController
 
   def index
     @users = User.all
-
-    render json: @users
+    render json: @users, each_serializer: AllusersSerializer
   end
 
   def show
-    render json: @user
+    if @user
+      if @user.logged_in && correct_user
+        render json: @user
+      else
+        render json: { message: 'you are not authorized to view this page' }
+      end
+    else
+      render json: { message: 'you are not authorized to view this page' }
+    end
   end
 
   def create
@@ -23,27 +30,40 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def update
-    @user = User.find(params[:id])
-
-    if @user.update(user_params)
-      head :no_content
+    if @user.logged_in && correct_user
+      if @user.update(user_params)
+        render json: { message: "user updated!"}
+      else
+        render json: @user.errors, status: :unprocessable_entity
+      end
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render json: { message: 'you are not authorized to view this page' }
     end
   end
 
   def destroy
-    @user.destroy
-    render json: { message: "user deleted" }
+    if @user.logged_in && correct_user
+      @user.destroy
+      render json: { message: "user deleted" }
+    else
+      render json: { message: 'you are not authorized to view this page' }
+    end
   end
 
   private
 
     def set_user
-      @user = User.find(params[:id])
+      @user = User.find_by(id: params[:id])
     end
 
     def user_params
       params.permit(:name, :email, :password)
     end
+
+    def correct_user
+      this_user = set_user
+      correct_user = find_user
+      this_user == correct_user
+    end
+
 end

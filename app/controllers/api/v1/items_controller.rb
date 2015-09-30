@@ -1,6 +1,7 @@
 class Api::V1::ItemsController < ApplicationController
   before_action :set_item, only: [:show, :update, :destroy]
   before_action :authenticate, only: [:create, :show, :update, :destroy]
+  before_action :get_user, only: [:show, :update, :destroy]
 
   def index
     @items = Item.where(:bucketlist_id => params[:bucketlist_id])
@@ -8,7 +9,13 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def show
-    render json: @item
+    if @item
+      if @user == find_user.id
+        render json: @item
+      else
+        render json: { message: 'you are not authorized to view this page' }
+      end
+    end
   end
 
   def create
@@ -22,24 +29,35 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def update
-    @item = Item.find(params[:id])
-
-    if @item.update(item_params)
-      render json: { message: "updated successfully", item: @item }
+    if @user == find_user.id
+      if @item.update(item_params)
+        render json: { message: "updated successfully", item: @item }
+      else
+        render json: @item.errors, status: :unprocessable_entity
+      end
     else
-      render json: @item.errors, status: :unprocessable_entity
+      render json: { message: 'you are not authorized to view this page' }
     end
   end
 
   def destroy
-    @item.destroy
-    render json: { message: "item deleted successfully" }
+    if @user == find_user.id
+      @item.destroy
+      render json: { message: "item deleted successfully" }
+    else
+      render json: { message: 'you are not authorized to view this page' }
+    end
   end
 
   private
 
+    def get_user
+      bucketlist = Bucketlist.find_by(id: item_params[:bucketlist_id])
+      @user = bucketlist.user_id
+    end
+
     def set_item
-      @item = Item.find(params[:id])
+      @item = Item.find_by(id: params[:id])
     end
 
     def item_params

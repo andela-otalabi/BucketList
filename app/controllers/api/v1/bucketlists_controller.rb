@@ -1,20 +1,24 @@
 class Api::V1::BucketlistsController < ApplicationController
   before_action :set_bucketlist, only: [:show, :update, :destroy]
   before_action :authenticate, only: [:create, :show, :update, :destroy]
+  before_action :get_user, only: [:show, :update, :destroy]
 
   def index
     @bucketlists = Bucketlist.all
-    render json: @bucketlists
+    render json: @bucketlists, each_serializer: AllbucketlistsSerializer
   end
 
   def show
-    render json: @bucketlist
+    if @user == find_user.id
+      render json: @bucketlist
+    else
+      render json: { message: 'you are not authorized to view this page' }
+    end
   end
 
   def create
-    @user = find_user
     @bucketlist = Bucketlist.new(bucketlist_params)
-    @bucketlist.user_id = @user.id
+    @bucketlist.user_id = find_user.id
 
     if @bucketlist.save
       render json: @bucketlist, status: :created, location: api_v1_bucketlist_path(@bucketlist)
@@ -24,24 +28,35 @@ class Api::V1::BucketlistsController < ApplicationController
   end
 
   def update
-    @bucketlist = Bucketlist.find(params[:id])
+    if @user == find_user.id
+      @bucketlist = Bucketlist.find(params[:id])
 
-    if @bucketlist.update(bucketlist_params)
-      render json: { message: "bucketlist updated!" }
+      if @bucketlist.update(bucketlist_params)
+        render json: { message: "bucketlist updated!" }
+      else
+        render json: @bucketlist.errors, status: :unprocessable_entity
+      end
     else
-      render json: @bucketlist.errors, status: :unprocessable_entity
+      render json: { message: 'you are not authorized to view this page' }
     end
   end
   
   def destroy
-    @bucketlist.destroy
-    render json: { message: "bucketlist deleted" }
+    if @user == find_user.id
+      @bucketlist.destroy
+      render json: { message: "bucketlist deleted" }
+    else
+      render json: { message: 'you are not authorized to view this page' }
+    end
   end
 
   private
+    def get_user
+      @user = @bucketlist.user_id if @bucketlist
+    end
 
     def set_bucketlist
-      @bucketlist = Bucketlist.find(params[:id])
+      @bucketlist = Bucketlist.find_by(id: params[:id])
     end
 
     def bucketlist_params
