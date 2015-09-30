@@ -1,5 +1,5 @@
 class Api::V1::ItemsController < ApplicationController
-  before_action :set_item, only: [:show, :update, :destroy]
+  # before_action :set_item, only: [:show, :update, :destroy]
   before_action :authenticate, only: [:create, :show, :update, :destroy]
   before_action :get_user, only: [:show, :update, :destroy]
 
@@ -9,7 +9,8 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def show
-    if @item && false
+    @item = Item.find_by(id: params[:id])
+    if false
       if @user == find_user.id
         render json: @item
       else
