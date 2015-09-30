@@ -3,13 +3,12 @@ class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Token::ControllerMethods
   before_filter :add_allow_credentials_headers
 
-
   def authenticate
     authenticate_token || render_unauthorized
   end
 
   def authenticate_token
-     authenticate_with_http_token do |token, options|
+    authenticate_with_http_token do |token, options|
       User.find_by(token: token)
     end
   end
