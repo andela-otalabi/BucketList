@@ -1,6 +1,7 @@
+include ActionController::HttpAuthentication::Token::ControllerMethods
+
 class ApplicationController < ActionController::API
   include ActionController::Serialization
-  include ActionController::HttpAuthentication::Token::ControllerMethods
   before_filter :add_allow_credentials_headers
 
   def authenticate
@@ -9,7 +10,7 @@ class ApplicationController < ActionController::API
 
   def authenticate_token
     authenticate_with_http_token do |token, options|
-      User.find_by(token: token)
+      @user = User.find_by(token: token)
     end
   end
 
@@ -18,10 +19,8 @@ class ApplicationController < ActionController::API
   end
 
   def find_user
-    authorization = request.env["HTTP_AUTHORIZATION"]
-    authorization["Token token="]=""
-    authorization
-    @user = User.find_by(token: authorization)
+    authenticate_token
+    render json: { message: 'you are not authorized to view this page' } unless @user
   end
 
   def add_allow_credentials_headers

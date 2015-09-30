@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   validates :password, presence: true, length: { minimum: 6 }, allow_blank: true
 
   has_many :bucketlists
+  has_many :items, through: :bucketlists
 
   def generate_auth_token
     begin

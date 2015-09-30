@@ -1,7 +1,7 @@
 class Api::V1::ItemsController < ApplicationController
-  # before_action :set_item, only: [:show, :update, :destroy]
   before_action :authenticate, only: [:create, :show, :update, :destroy]
-  # before_action :get_user, only: [:show, :update, :destroy]
+  before_action :find_user
+  before_action :set_item, only: [:show, :update, :destroy]
 
   def index
     @items = Item.where(:bucketlist_id => params[:bucketlist_id])
@@ -9,12 +9,9 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def show
-    if false
-      if @user == find_user.id
+    @item = @user.items.find_by(id: params[:id])
+    if @item
         render json: @item
-      else
-        render json: { message: 'you are not authorized to view this page' }
-      end
     end
   end
 
@@ -29,7 +26,7 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def update
-    if @user == find_user.id
+    if @user
       if @item.update(item_params)
         render json: { message: "updated successfully", item: @item }
       else
@@ -41,7 +38,7 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def destroy
-    if @user == find_user.id
+    if @user
       @item.destroy
       render json: { message: "item deleted successfully" }
     else
@@ -51,13 +48,8 @@ class Api::V1::ItemsController < ApplicationController
 
   private
 
-    def get_user
-      bucketlist = Bucketlist.find_by(id: item_params[:bucketlist_id])
-      @user = bucketlist.user_id
-    end
-
     def set_item
-      @item = Item.find_by(id: params[:id])
+      @item = @user.items.find_by(id: params[:id])    
     end
 
     def item_params
