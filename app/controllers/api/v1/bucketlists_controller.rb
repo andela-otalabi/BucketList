@@ -31,7 +31,7 @@ class Api::V1::BucketlistsController < ApplicationController
   def update
     if @user.bucketlists.include? @bucketlist
       if @bucketlist.update(bucketlist_params)
-        render json: { message: "bucketlist updated!" }
+        render json: { message: "bucketlist updated!", bucketlist: @bucketlist }
       else
         render json: @bucketlist.errors
       end
