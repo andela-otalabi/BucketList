@@ -9,4 +9,6 @@ Rails.application.routes.draw do
       post "auth/login" => 'auth#login'
     end
   end
+
+  match "*path", to: "api/v1/errors#not_found", via: :all, as: "not_found"
 end
