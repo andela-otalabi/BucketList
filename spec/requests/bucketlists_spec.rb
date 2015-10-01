@@ -10,7 +10,7 @@ RSpec.describe "Bucketlists", type: :request do
       get '/api/v1/bucketlists'
       expect(response).to have_http_status(200)
     end
-    
+
     it "should not allow unauthorized users create bucketlist" do
      post '/api/v1/bucketlists', {name: "mountain climbing"}
       message = JSON.parse(response.body)["message"]
@@ -27,8 +27,7 @@ RSpec.describe "Bucketlists", type: :request do
     end
 
     it "should allow an authorized user update a bucketlist" do
-      post '/api/v1/bucketlists', { name: "mountain climbing"},
-      {"Authorization" => "Token token=#{@user.token}"}
+      Bucketlist.create(name: "mountain climbing", user_id: @user.id)
 
       put '/api/v1/bucketlists/1', { name: "mountains to climb"},
       {"Authorization" => "Token token=#{@user.token}"}
@@ -44,8 +43,7 @@ RSpec.describe "Bucketlists", type: :request do
     end
 
     it "should not allow users view other users bucketlists" do
-      post '/api/v1/bucketlists', { name: "mountain climbing"},
-      {"Authorization" => "Token token=#{@user.token}"}
+      Bucketlist.create(name: "mountain climbing", user_id: @user.id)
 
       get '/api/v1/bucketlists/9'
       message = JSON.parse(response.body)["message"]
