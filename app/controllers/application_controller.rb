@@ -1,8 +1,8 @@
 include ActionController::HttpAuthentication::Token::ControllerMethods
-include ActionController::Serialization
 
 class ApplicationController < ActionController::API
-  
+  include ActionController::Serialization
+
   rescue_from Exception, with: :render_500
 
   before_filter :add_allow_credentials_headers
