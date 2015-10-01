@@ -8,7 +8,7 @@ class Api::V1::BucketlistsController < ApplicationController
   end
 
   def show
-    if @user && @user.logged_in
+    if @user.bucketlists.include? @bucketlist
       render json: @bucketlist
     else
       render json: { message: 'you are not authorized to view this page' }
@@ -29,9 +29,7 @@ class Api::V1::BucketlistsController < ApplicationController
   end
 
   def update
-    if @user && @user.logged_in
-      @bucketlist = Bucketlist.find(params[:id])
-
+    if @user.bucketlists.include? @bucketlist
       if @bucketlist.update(bucketlist_params)
         render json: { message: "bucketlist updated!" }
       else
@@ -43,7 +41,7 @@ class Api::V1::BucketlistsController < ApplicationController
   end
   
   def destroy
-    if @user && @user.logged_in
+    if @user.bucketlists.include? @bucketlist
       @bucketlist.destroy
       render json: { message: "bucketlist deleted" }
     else

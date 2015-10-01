@@ -2,33 +2,41 @@ class Api::V1::ItemsController < ApplicationController
   before_action :authenticate, only: [:create, :show, :update, :destroy]
   before_action :find_user
   before_action :set_item, only: [:show, :update, :destroy]
+  before_action :get_bucketlist, only: [:index, :create]
 
-  def index
-    @items = Item.where(:bucketlist_id => params[:bucketlist_id])
-    render json: @items
+  def index 
+    if @user.bucketlists.include? @bucketlist
+      @items = Item.where(:bucketlist_id => params[:bucketlist_id])
+      render json: @items
+    else
+      render json: { message: "you can not view items that do not belong to you"}
+    end
   end
 
   def show
-    if @user && @user.logged_in
-      @item = @user.items.find_by(id: params[:id])
+    if @user.items.include? @item
       if @item
         render json: @item
       end
+    else
+      render json: { message: 'you are not authorized to view this page' }
     end
   end
 
   def create
-    @item = Item.new(item_params)
-    @item.bucketlist_id = item_params[:bucketlist_id]
-    if @item.save
-      render json: { message: "item added successfully", item: @item }
+    if @user.bucketlists.include? @bucketlist
+      @item = Item.new(item_params)
+      @item.bucketlist_id = item_params[:bucketlist_id]
+      if @item.save
+        render json: { message: "item added successfully", item: @item }
+      end
     else
-      render json: @item.errors
+      render json: { message: "you can not create an item for non existing bucketlists" }
     end
   end
 
   def update
-    if @user && @user.logged_in
+    if @user.items.include? @item
       if @item.update(item_params)
         render json: { message: "updated successfully", item: @item }
       else
@@ -40,7 +48,7 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def destroy
-    if @user && @user.logged_in
+    if @user.items.include? @item
       @item.destroy
       render json: { message: "item deleted successfully" }
     else
@@ -49,9 +57,12 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   private
+    def get_bucketlist
+      @bucketlist = Bucketlist.find_by(id: params[:bucketlist_id]) 
+    end
 
     def set_item
-      @item = @user.items.find_by(id: params[:id])    
+      @item = @user.items.find_by(id: params[:id]) 
     end
 
     def item_params
