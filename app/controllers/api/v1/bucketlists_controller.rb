@@ -8,7 +8,7 @@ class Api::V1::BucketlistsController < ApplicationController
   end
 
   def show
-    if @user
+    if @user && @user.logged_in
       render json: @bucketlist
     else
       render json: { message: 'you are not authorized to view this page' }
@@ -16,26 +16,26 @@ class Api::V1::BucketlistsController < ApplicationController
   end
 
   def create
-    if @user
+    if @user && @user.logged_in
       @bucketlist = Bucketlist.new(bucketlist_params)
       @bucketlist.user_id = @user.id
 
       if @bucketlist.save
-        render json: @bucketlist, status: :created, location: api_v1_bucketlist_path(@bucketlist)
+        render json: @bucketlist, status: :created, message: "created"
       else
-        render json: @bucketlist.errors, status: :unprocessable_entity
+        render json: { status: error }
       end
     end
   end
 
   def update
-    if @user
+    if @user && @user.logged_in
       @bucketlist = Bucketlist.find(params[:id])
 
       if @bucketlist.update(bucketlist_params)
         render json: { message: "bucketlist updated!" }
       else
-        render json: @bucketlist.errors, status: :unprocessable_entity
+        render json: @bucketlist.errors
       end
     else
       render json: { message: 'you are not authorized to view this page' }
@@ -43,7 +43,7 @@ class Api::V1::BucketlistsController < ApplicationController
   end
   
   def destroy
-    if @user
+    if @user && @user.logged_in
       @bucketlist.destroy
       render json: { message: "bucketlist deleted" }
     else

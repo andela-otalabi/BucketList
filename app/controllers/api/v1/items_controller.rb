@@ -9,9 +9,11 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def show
-    @item = @user.items.find_by(id: params[:id])
-    if @item
+    if @user && @user.logged_in
+      @item = @user.items.find_by(id: params[:id])
+      if @item
         render json: @item
+      end
     end
   end
 
@@ -21,16 +23,16 @@ class Api::V1::ItemsController < ApplicationController
     if @item.save
       render json: { message: "item added successfully", item: @item }
     else
-      render json: @item.errors, status: :unprocessable_entity
+      render json: @item.errors
     end
   end
 
   def update
-    if @user
+    if @user && @user.logged_in
       if @item.update(item_params)
         render json: { message: "updated successfully", item: @item }
       else
-        render json: @item.errors, status: :unprocessable_entity
+        render json: @item.errors
       end
     else
       render json: { message: 'you are not authorized to view this page' }
@@ -38,7 +40,7 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def destroy
-    if @user
+    if @user && @user.logged_in
       @item.destroy
       render json: { message: "item deleted successfully" }
     else

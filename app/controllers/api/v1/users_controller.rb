@@ -19,7 +19,7 @@ class Api::V1::UsersController < ApplicationController
     if @user.save
       render json: { message: "You have successfully signed up #{@user.name}"}
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render json: @user.errors
     end
   end
 
@@ -28,7 +28,7 @@ class Api::V1::UsersController < ApplicationController
       if @user.update(user_params)
         render json: { message: "user updated!"}
       else
-        render json: @user.errors, status: :unprocessable_entity
+        render json: @user.errors
       end
     end
   end
