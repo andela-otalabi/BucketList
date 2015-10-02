@@ -92,6 +92,7 @@ Only two routes are unprotected, meaning no authentication token is required to 
 They are the *Login 'POST /auth/login'* and *View all Bucket lists 'GET /bucketlists/'*
 
 **Visiting protected routes**
+
 To visit protected routes, include the authentication token returned after login in the header
 
 Like this
@@ -101,6 +102,7 @@ Like this
 ```
 
 **BucketLists**
+
 *To create a bucket list*
 <table>
    <th>
@@ -261,6 +263,7 @@ Response
 ```
 
 **Bucket list Items**
+
 *Add items to a bucket list*
 <table>
    <th>
@@ -425,6 +428,7 @@ Response
 ```
 
 **Log out**
+
 Every authentication token expires on log out, therefore after log out the old token will not be valid
 
 *To Log out*
