@@ -50,8 +50,8 @@ Response
 Then you log in 
 <table>
   <thead>
-   <tr>
-    <td>
+   <th>
+    <tr><td>
      Verb
     </td>
     <td>
@@ -59,8 +59,8 @@ Then you log in
     </td>
     <td>
     Params
-    </td>
-   </tr>
+    </td></tr>
+   </th>
   </thead>
 
   <tbody>
