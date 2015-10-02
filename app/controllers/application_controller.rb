@@ -11,10 +11,14 @@ class ApplicationController < ActionController::API
     authenticate_token || render_unauthorized
   end
 
-  def authenticate_token
+  def authenticate_token    
     authenticate_with_http_token do |token, options|
       @user = User.find_by(token: token)
     end
+  end
+
+  def authenticate_by_param
+    @user = User.find_by_token(params[:token])
   end
 
   def render_unauthorized
@@ -22,7 +26,7 @@ class ApplicationController < ActionController::API
   end
 
   def find_user
-    authenticate_token
+    authenticate_token || authenticate_by_param
     render json: { message: 'you are not authorized to view this page' } unless @user
   end
 

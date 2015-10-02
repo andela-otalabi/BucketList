@@ -44,7 +44,7 @@ To obtain an authentication token:
 Response
 ```
 {
-    "message": "You have successfully signed up daisi"
+    "message": "You have successfully signed up john"
 }
 ```
 * Then you log in 
