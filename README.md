@@ -49,33 +49,33 @@ Response
 ```
 Then you log in 
 <table>
-<th>
- <tr>
-  <td>
-   Verb
-  </td>
-  <td>
-  Route
-  </td>
-  <td>
-  Params
-  </td>
- </tr>
-</th>
+  <thead>
+   <tr>
+    <td>
+     Verb
+    </td>
+    <td>
+    Route
+    </td>
+    <td>
+    Params
+    </td>
+   </tr>
+  </thead>
 
-<tbody>
-<tr>
-  <td>
-  POST
-  </td>
-  <td>
-  http://kickmylist.herokuapp.com/api/v1/auth/login
-  </td>
-  <td>
-  { email: "john@example.com", password: "123456"}
-  </td>
-</tr>
-</tbody>
+  <tbody>
+    <tr>
+      <td>
+      POST
+      </td>
+      <td>
+      http://kickmylist.herokuapp.com/api/v1/auth/login
+      </td>
+      <td>
+      { email: "john@example.com", password: "123456"}
+      </td>
+    </tr>
+  </tbody>
 </table>
 
 Response
