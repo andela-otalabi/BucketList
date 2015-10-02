@@ -17,7 +17,7 @@ class Api::V1::AuthController < ApplicationController
       @user.generate_auth_token
       @user.logged_in = false
       if @user.save
-        render json: "You have logged out successfully"
+        render json: { message: "You have logged out successfully" }
       else
         render json: { errors: "Error logging out"}
       end
