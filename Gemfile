@@ -7,7 +7,7 @@ gem 'rails-api'
 
 gem 'spring', :group => :development
 
-
+gem 'turbolinks'
 gem 'active_model_serializers'
 
 # To use ActiveModel has_secure_password
