@@ -1,13 +1,11 @@
 source 'https://rubygems.org'
 
-
 gem 'rails', '4.2.3'
 
 gem 'rails-api'
 
 gem 'spring', :group => :development
 
-gem 'turbolinks'
 gem 'active_model_serializers'
 
 # To use ActiveModel has_secure_password
@@ -18,9 +16,6 @@ group :development, :test do
   gem 'pry-nav'
   gem 'capybara'
   gem 'rspec-rails'
-
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
 end
 
 group :production do

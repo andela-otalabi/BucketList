@@ -3,11 +3,9 @@ include ActionController::HttpAuthentication::Token::ControllerMethods
 class ApplicationController < ActionController::API
   include ActionController::Serialization
 
+  rescue_from Exception, with: :render_500
   before_filter :cors_preflight_check
   after_filter :cors_set_access_control_headers
-
-  rescue_from Exception, with: :render_500
-
 
   def authenticate
     authenticate_token || render_unauthorized
