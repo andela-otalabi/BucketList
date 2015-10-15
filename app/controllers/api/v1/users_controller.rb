@@ -14,6 +14,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def create
+    require 'pry-nav'; binding.pry
     @user = User.new(user_params)
 
     if @user.save
@@ -43,7 +44,8 @@ class Api::V1::UsersController < ApplicationController
   private
 
     def user_params
-      params.permit(:name, :email, :password, :password_confirmation)
+      json_params = ActionController::Parameters.new( JSON.parse(request.body.read) )      
+      json_params.permit(:name, :email, :password, :password_confirmation)
     end
 
 end

@@ -4,8 +4,8 @@ class ApplicationController < ActionController::API
   include ActionController::Serialization
 
   rescue_from Exception, with: :render_500
-  before_filter :cors_preflight_check
-  after_filter :cors_set_access_control_headers
+
+  before_filter :add_allow_credentials_headers
 
   def authenticate
     authenticate_token || render_unauthorized
@@ -30,20 +30,13 @@ class ApplicationController < ActionController::API
     render json: { message: 'you are not authorized to view this page' } unless @user
   end
 
-  def cors_set_access_control_headers
+  def add_allow_credentials_headers
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
     headers['Access-Control-Allow-Origin'] = '*'
-    headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS'
-    headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, Accept, Authorization, Token'
-    headers['Access-Control-Max-Age'] = "1728000"
-  end
-
-  def cors_preflight_check
-    if request.method == 'OPTIONS'
-      headers['Access-Control-Allow-Origin'] = '*'
-      headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS'
-      headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, X-Prototype-Version, Token'
-      headers['Access-Control-Max-Age'] = '1728000'
-    end
+    headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
+    headers['Access-Control-Request-Method'] = '*'
+    headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
   end
 
   def render_500
