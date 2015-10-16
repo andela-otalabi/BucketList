@@ -72,6 +72,7 @@ GEM
     pry-nav (0.2.4)
       pry (>= 0.9.10, < 0.11.0)
     rack (1.6.4)
+    rack-cors (0.4.0)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.2.3)
@@ -144,6 +145,7 @@ DEPENDENCIES
   capybara
   pg
   pry-nav
+  rack-cors
   rails (= 4.2.3)
   rails-api
   railties
@@ -152,4 +154,4 @@ DEPENDENCIES
   sqlite3
 
 BUNDLED WITH
-   1.10.5
+   1.10.6

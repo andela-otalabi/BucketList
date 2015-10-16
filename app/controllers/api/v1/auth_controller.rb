@@ -2,14 +2,8 @@ class Api::V1::AuthController < ApplicationController
   before_action :find_user, only: [:logout]
 
   def login
-    if params[:email] && params[:password] == nil
-      res = JSON.parse(request.body.read)
-      user = User.find_by_email(res['email'].downcase)
-      password = res['password']
-    else
-      user = User.find_by_email(params[:email].downcase)
-      password = params[:password]
-    end
+    user = User.find_by(email: params[:email])
+    password = params[:password]
     
     if user && user.authenticate(password)
       user.logged_in = true
@@ -30,6 +24,10 @@ class Api::V1::AuthController < ApplicationController
         render json: { errors: "Error logging out"}
       end
     end
+  end
+
+  def login_params
+    params.permit(:email)
   end
 
 end

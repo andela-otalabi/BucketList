@@ -3,8 +3,6 @@ include ActionController::HttpAuthentication::Token::ControllerMethods
 class ApplicationController < ActionController::API
   include ActionController::Serialization
 
-  rescue_from Exception, with: :render_500
-
   before_filter :add_allow_credentials_headers
 
   def authenticate
@@ -31,15 +29,10 @@ class ApplicationController < ActionController::API
   end
 
   def add_allow_credentials_headers
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    headers['Access-Control-Expose-Headers'] = 'ETag'
     headers['Access-Control-Allow-Origin'] = '*'
     headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
-    headers['Access-Control-Request-Method'] = '*'
-    headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    headers['Access-Control-Allow-Headers'] = '*, Origin, X-Requested-With, Content-Type, Accept, Authorization'
   end
 
-  def render_500
-    render json: { error: "internal server error", status: 500 }, status: 500
-  end
 end
